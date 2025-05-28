@@ -9,27 +9,32 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
       - name: Login to Azure
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-      - name: Build and push to ACR
-        uses: azure/acr-build@v1
+
+      - name: Login to ACR
+        uses: docker/login-action@v2
         with:
-          service_principal: ${{ secrets.SERVICE_PRINCIPAL }}
-          service_principal_password: ${{ secrets.SERVICE_PRINCIPAL_PASSWORD }}
-          tenant: ${{ secrets.TENANT }}
-          registry: todoappacr
-          repository: todo-app
-          image: todo-app
-          folder: .
-          branch: main
-          tag: latest
+          registry: todoappacr.azurecr.io
+          username: ${{ secrets.SERVICE_PRINCIPAL }}
+          password: ${{ secrets.SERVICE_PRINCIPAL_PASSWORD }}
+
+      - name: Build and push to ACR
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: todoappacr.azurecr.io/todo-app:latest
+
       - name: Set AKS context
         uses: azure/aks-set-context@v3
         with:
           resource-group: todoAppResourceGroup
           cluster-name: todoAppCluster
+
       - name: Deploy to AKS
         uses: Azure/k8s-deploy@v4
         with:
