@@ -114,6 +114,12 @@ The application uses a multi-container setup:
 - `db`: PostgreSQL database
 - `nginx`: Reverse proxy and static file server
 
+## Azure Setup
+
+- Resource Group: todoAppResourceGroup
+- ACR: todoappacr
+- AKS Cluster: todoAppCluster
+
 ## Contributing
 
 1. Fork the repository
